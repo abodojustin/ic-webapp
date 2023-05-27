@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odoo
+  labels:
+    app: odoo
+spec:
+  selector:
+    matchLabels:
+      app: odoo
+      env: prod
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: odoo
+        env: prod
+    spec:
+      containers:
+      - name: odoo
+        image: odoo:13.0
+        env:
+        - name: HOST
+          value: db
+        - name: USER
+          value: odoo
+        - name: PASSWORD
+          value: odoo
+        ports:
+        - containerPort: 8069
+        volumeMounts:
+        - mountPath: /var/lib/odoo
+          name: odoo-web-data
+        - mountPath: /etc/odoo
+          name: odoo-config
+        - mountPath: /mnt/extra-addons
+          name: odoo-addons
+      volumes:
+      - name: odoo-web-data
+        hostPath:
+          path: /data-odoo
+          type: DirectoryOrCreate
+      - name: odoo-config
+        hostPath:
+          path: /data-odoo-config
+          type: DirectoryOrCreate
+      - name: odoo-addons
+        hostPath:
+          path: /data-odoo-addons
+          type: DirectoryOrCreate

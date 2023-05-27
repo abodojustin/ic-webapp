@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgadmin
+  labels:
+    env: prod
+    app: pgadmin
+spec:
+  selector:
+    matchLabels:
+      app: pgadmin
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: pgadmin
+        env: prod
+    spec:
+      containers:
+      - name: pgadmin4
+        image: dpage/pgadmin4
+        env:
+        - name: PGADMIN_DEFAULT_EMAIL
+          value: abodojustin@gmail.com
+        - name: PGADMIN_DEFAULT_PASSWORD
+          value: root
+        - name: PGADMIN_PORT
+          value: "80"
+        ports:
+        - containerPort: 80
+          name: pgadminport
+        volumeMounts:
+        - name: pgadmin-config
+          mountPath: /pgadmin4/servers.json
+        - name: pgadmin-data
+          mountPath: /var/tmp/pgadmin
+      volumes:
+      - name: pgadmin-config
+        hostPath:
+          path: /pgadmin-config
+          type: DirectoryOrCreate
+      - name: pgadmin-data
+        hostPath:
+          path: /pgadmin-data
+          type: DirectoryOrCreate
