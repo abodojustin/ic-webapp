@@ -34,7 +34,7 @@ spec:
         ports:
         - containerPort: 8069
         volumeMounts:
-        - mountPath: /var/lib/odoo
+        - mountPath: /var/lib/odoo/addons/13.0
           name: odoo-web-data
         - mountPath: /etc/odoo
           name: odoo-config
