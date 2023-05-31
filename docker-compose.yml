@@ -4,8 +4,8 @@ services:
     container_name: ic-webapp
     image: 'ic-webapp:v1'
     environment:
-      - ODOO_URL=odoo
-      - PGADMIN_URL=pgadmin
+      - ODOO_URL=http://${HOST_IP}:8089/
+      - PGADMIN_URL=http://${HOST_IP}:5050/
     depends_on:
       - pgadmin
       - odoo
@@ -46,7 +46,7 @@ services:
     depends_on:
       - postgres
     volumes:
-      - '/pgadmin-config-compose:/pgadmin4/servers.json'
+      - ${PWD}/servers.json:/pgadmin4/servers.json
       - '/pgadmin-data-compose:/var/tmp/pgadmin'
 
   postgres:
@@ -63,6 +63,10 @@ services:
     volumes:
       - '/data-postgrey-compose:/var/lib/postgresql/data'
 
+volumes:
+  data-odoo-compose:
+  data-postgrey-compose:
+  pgadmin-data-compose:
 networks:
   ic-webapp:
     driver: bridge
